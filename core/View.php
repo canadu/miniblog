@@ -22,7 +22,7 @@ class View
    * @param ビューファイルに渡す変数を指定
    * @param レイアウトファイル名を指定
    */
-  public function render($_path, $_valiables = array(), $_layout = false)
+  public function render($_path, $_variables = array(), $_layout = false)
   {
     $_file = $this->base_dir . '/' . $_path . '.php';
     extract(array_merge($this->defaults, $_variables));

@@ -34,7 +34,7 @@ abstract class Controller
     }
 
     //ログインされていない場合エラーを発生させる
-    if($this->needsAuthentication($action) && !$this->session->isAuthnticated()) {
+    if($this->needsAuthentication($action) && !$this->session->isAuthenticated()) {
       throw new UnauthorizedActionException();
     }
 
@@ -71,7 +71,7 @@ abstract class Controller
    */
   protected function forward404()
   {
-    throw new HttpFoundException('Forwarded 404 page from '
+    throw new HttpNotFoundException('Forwarded 404 page from '
     . $this->controller_name . '/' . $this->action_name);
   }
 
@@ -81,10 +81,10 @@ abstract class Controller
   protected function redirect($url)
   {
     if(!preg_match('#https?://#', $url)) {
-      $protocl = $this->request->isSsl() ? 'https://' : 'http://';
+      $protocol = $this->request->isSsl() ? 'https://' : 'http://';
       $host = $this->request->getHost();
       $base_url = $this->request-getBaseUrl();
-      $url = $protocl . $host . $base_url . $url;
+      $url = $protocol . $host . $base_url . $url;
     }
     $this->response->setStatusCode(302, 'Found');
     $this->response->setHttpHeader('Location', $url);
@@ -97,13 +97,16 @@ abstract class Controller
   protected function generateCsrfToken($form_name)
   {
     $key = 'csrf_tokens/' . $form_name;
-    $token = $this->session->get($key, array());
-    if (count($token) >= 10) {
-      array_shift($tokens);
+    $tokens = $this->session->get($key, array());
+    if (is_array($tokens)) {
+      if (count($tokens) >= 10) {
+        array_shift($tokens);
+      }
     }
-    $tonen = sha1($form_name . session_id() . microtime());
-    $token[] = $token;
-    $this->session->set($key, $token);
+    $token = sha1($form_name . session_id() . microtime());
+    $tokens = array();
+    $tokens[] = $token;
+    $this->session->set($key, $tokens);
     return $token;
   }
 
