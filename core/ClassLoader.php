@@ -1,10 +1,11 @@
 <?php
+
 /**
  * オートロードに関する処理をまとめたクラス
  * オートロード対象となるクラスのルール
  *  1.クラス名.phpというファイル名
  *  2.coreディレクトリ、modelsディレクトリに配置する
-*/
+ */
 class ClassLoader
 {
   protected $dirs;
@@ -31,15 +32,12 @@ class ClassLoader
    */
   public function loadClass($class)
   {
-    foreach($this->dirs as $dir)
-    {
+    foreach ($this->dirs as $dir) {
       $file = $dir . '/' . $class . '.php';
-      if (is_readable($file))
-      {
+      if (is_readable($file)) {
         require $file;
         return;
       }
     }
   }
-
 }

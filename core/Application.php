@@ -1,4 +1,9 @@
 <?php
+
+/**
+ * Application.
+ *
+ */
 abstract class Application
 {
   protected $debug = false;
@@ -6,8 +11,12 @@ abstract class Application
   protected $response;
   protected $session;
   protected $db_manager;
-  protected $login_action = array();
 
+  /**
+   * コンストラクタ
+   *
+   * @param boolean $debug
+   */
   public function __construct($debug = false)
   {
     $this->setDebugMode($debug);
@@ -16,162 +25,245 @@ abstract class Application
   }
 
   /**
-   * デバッグモードに応じてエラー表示処理を変更する
+   * デバッグモードを設定
+   *
+   * @param boolean $debug
    */
   protected function setDebugMode($debug)
   {
-    if($debug) {
+    if ($debug) {
       $this->debug = true;
-      ini_set('display_errors',1);
+      ini_set('display_errors', 1);
       error_reporting(-1);
     } else {
       $this->debug = false;
-      ini_set('display_errors',0);
+      ini_set('display_errors', 0);
     }
   }
 
   /**
-   * 各クラスの初期化処理を行う
+   * アプリケーションの初期化
    */
   protected function initialize()
   {
-    $this->request = new Request();
-    $this->response = new Response();
-    $this->session = new Session();
+    $this->request    = new Request();
+    $this->response   = new Response();
+    $this->session    = new Session();
     $this->db_manager = new DbManager();
-    $this->router = new Router($this->registerRoutes());
+    $this->router     = new Router($this->registerRoutes());
   }
 
   /**
-   * 空のメソッドとして定義 個別のアプリケーションで設定を出来るようにしている
+   * アプリケーションの設定
    */
   protected function configure()
   {
   }
 
+  /**
+   * プロジェクトのルートディレクトリを取得
+   *
+   * @return string ルートディレクトリへのファイルシステム上の絶対パス
+   */
   abstract public function getRootDir();
+
+  /**
+   * ルーティングを取得
+   *
+   * @return array
+   */
   abstract protected function registerRoutes();
 
+  /**
+   * デバッグモードか判定
+   *
+   * @return boolean
+   */
   public function isDebugMode()
   {
     return $this->debug;
   }
 
+  /**
+   * Requestオブジェクトを取得
+   *
+   * @return Request
+   */
   public function getRequest()
   {
     return $this->request;
   }
 
+  /**
+   * Responseオブジェクトを取得
+   *
+   * @return Response
+   */
   public function getResponse()
   {
     return $this->response;
   }
 
+  /**
+   * Sessionオブジェクトを取得
+   *
+   * @return Session
+   */
   public function getSession()
   {
     return $this->session;
   }
 
+  /**
+   * DbManagerオブジェクトを取得
+   *
+   * @return DbManager
+   */
   public function getDbManager()
   {
     return $this->db_manager;
   }
 
+  /**
+   * コントローラファイルが格納されているディレクトリへのパスを取得
+   *
+   * @return string
+   */
   public function getControllerDir()
   {
     return $this->getRootDir() . '/controllers';
   }
 
+  /**
+   * ビューファイルが格納されているディレクトリへのパスを取得
+   *
+   * @return string
+   */
   public function getViewDir()
   {
     return $this->getRootDir() . '/views';
   }
 
+  /**
+   * モデルファイルが格納されているディレクトリへのパスを取得
+   *
+   * @return string
+   */
   public function getModelDir()
   {
     return $this->getRootDir() . '/models';
   }
 
+  /**
+   * ドキュメントルートへのパスを取得
+   *
+   * @return string
+   */
   public function getWebDir()
   {
     return $this->getRootDir() . '/web';
   }
 
   /**
-   * ルーティングパラメーターを取得し、コントローラー名と、アクション名を特定する
+   * アプリケーションを実行する
+   *
+   * @throws HttpNotFoundException ルートが見つからない場合
    */
   public function run()
   {
     try {
       $params = $this->router->resolve($this->request->getPathInfo());
       if ($params === false) {
-        throw new HttpNotFoundException('No route found for' . $this->request->getPathInfo());
+        throw new HttpNotFoundException('No route found for ' . $this->request->getPathInfo());
       }
+
       $controller = $params['controller'];
       $action = $params['action'];
+
       $this->runAction($controller, $action, $params);
     } catch (HttpNotFoundException $e) {
       $this->render404Page($e);
     } catch (UnauthorizedActionException $e) {
-      list($controller,$action) = $this->login_action;
+      list($controller, $action) = $this->login_action;
       $this->runAction($controller, $action);
     }
+
     $this->response->send();
   }
 
   /**
-   * アクションを実行する
+   * 指定されたアクションを実行する
+   *
+   * @param string $controller_name
+   * @param string $action
+   * @param array $params
+   *
+   * @throws HttpNotFoundException コントローラが特定できない場合
    */
-  public function runAction($controller_name, $action, $params =  array())
+  public function runAction($controller_name, $action, $params = array())
   {
-    //ucfirstを用いて先頭を大文字にする
-    $controller_class =  ucfirst($controller_name) . 'Controller';
+    $controller_class = ucfirst($controller_name) . 'Controller';
+
     $controller = $this->findController($controller_class);
     if ($controller === false) {
-      throw new HttpFoundException($controller_class . 'controller is not found.');
+      throw new HttpNotFoundException($controller_class . ' controller is not found.');
     }
+
     $content = $controller->run($action, $params);
+
     $this->response->setContent($content);
   }
 
   /**
-   * コントローラークラスが読み込まれていない場合に、クラスファイルの読み込みを行う
+   * 指定されたコントローラ名から対応するControllerオブジェクトを取得
+   *
+   * @param string $controller_class
+   * @return Controller
    */
   protected function findController($controller_class)
   {
     if (!class_exists($controller_class)) {
       $controller_file = $this->getControllerDir() . '/' . $controller_class . '.php';
-    }
-    if (!is_readable($controller_file)) {
-      return false;
-    } else {
-      require_once $controller_file;
-      if(!class_exists($controller_class)) {
+      if (!is_readable($controller_file)) {
         return false;
+      } else {
+        require_once $controller_file;
+
+        if (!class_exists($controller_class)) {
+          return false;
+        }
       }
     }
+
     return new $controller_class($this);
   }
 
+  /**
+   * 404エラー画面を返す設定
+   *
+   * @param Exception $e
+   */
   protected function render404Page($e)
   {
     $this->response->setStatusCode(404, 'Not Found');
-    $message = $this->isDebugMode() ? $e->getMessage() : 'Page not found';
+    $message = $this->isDebugMode() ? $e->getMessage() : 'Page not found.';
     $message = htmlspecialchars($message, ENT_QUOTES, 'UTF-8');
-    $this->response->setContent(<<<EOF
-    <!DOCTYPE html>
-    <html lang="ja">
-    <head>
-      <meta charset="UTF-8">
-      <meta http-equiv="X-UA-Compatible" content="IE=edge">
-      <meta name="viewport" content="width=device-width, initial-scale=1.0">
-      <title>404</title>
-    </head>
-    <body>
-      {$message}
-    </body>
-    </html>
+
+    $this->response->setContent(
+      <<<EOF
+        <!DOCTYPE html>
+        <html lang="ja">
+        <head>
+          <meta charset="UTF-8">
+          <meta http-equiv="X-UA-Compatible" content="IE=edge">
+          <meta name="viewport" content="width=device-width, initial-scale=1.0">
+          <title>404</title>
+        </head>
+        <body>
+          {$message}
+        </body>
+        </html>
 EOF
-  );
+    );
   }
 }

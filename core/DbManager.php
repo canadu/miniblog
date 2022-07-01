@@ -1,4 +1,5 @@
 <?php
+
 /**
  * データベースへの接続情報やDbRepositryを管理するクラス
  */
@@ -17,21 +18,20 @@ class DbManager
       'options' => array(),
     ), $params);
 
-    $con = new PDO (
+    $con = new PDO(
       $params['dsn'],
       $params['user'],
       $params['password'],
       $params['options']
     );
 
-    $con->setAttribute(PDO::ATTR_ERRMODE,PDO::ERRMODE_EXCEPTION);
+    $con->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
     $this->connections[$name] = $con;
   }
 
   public function getConnection($name = null)
   {
-    if(is_null($name))
-    {
+    if (is_null($name)) {
       return current($this->connections);
     }
     return $this->connections[$name];
@@ -44,8 +44,7 @@ class DbManager
 
   public function getConnectionForRepository($repository_name)
   {
-    if (isset($this->repository_connection_map[$repository_name]))
-    {
+    if (isset($this->repository_connection_map[$repository_name])) {
       $name = $this->repository_connection_map[$repository_name];
       $con = $this->getConnection($name);
     } else {
@@ -56,7 +55,7 @@ class DbManager
 
   public function get($repository_name)
   {
-    if(!isset($this->repositories[$repository_name])) {
+    if (!isset($this->repositories[$repository_name])) {
       $repository_class = $repository_name . 'Repository';
       $con = $this->getConnectionForRepository($repository_name);
       $repository = new $repository_class($con);
@@ -77,5 +76,4 @@ class DbManager
       unset($con);
     }
   }
-
 }

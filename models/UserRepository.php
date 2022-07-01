@@ -35,11 +35,9 @@ class UserRepository extends DbRepository
   {
     $sql = "SELECT COUNT(id) as count FROM user WHERE user_name = :user_name";
     $row = $this->fetch($sql, array(':user_name' => $user_name));
-    if ($row['count'] === 0)
-    {
+    if ($row['count'] === '0') {
       return true;
     }
     return false;
   }
-
 }

@@ -1,4 +1,5 @@
 <?php
+
 /**
  * リクエストに対するレスポンス。最終的にユーザーへ返すレスポンシ情報を管理する
  */
@@ -10,13 +11,12 @@ class Response
   protected $http_headers = array();
 
   /**
-   *　各プロパティに設定された値を元にレスポンシブの送信を行う
+   *各プロパティに設定された値を元にレスポンスの送信を行う
    */
   public function send()
   {
     header('HTTP/1.1' . $this->status_code . ' ' . $this->status_code);
-    foreach ($this->http_headers as $name => $value)
-    {
+    foreach ($this->http_headers as $name => $value) {
       header($name . ': ' . $value);
     }
     echo $this->content;
@@ -46,5 +46,4 @@ class Response
   {
     $this->http_headers[$name] = $value;
   }
-
 }
