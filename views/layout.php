@@ -13,6 +13,19 @@
   <div class="header">
     <h1><a href="<?php echo $base_url; ?>/"></a>フレームワークのテスト</h1>
   </div>
+  <div id="nav">
+    <p>
+      <?php if ($session->isAuthenticated()) : ?>
+        <!-- ログイン状態 -->
+        <a href="<?php echo $base_url; ?>/">ホーム</a>
+        <a href="<?php echo $base_url; ?>/account">アカウント</a>
+      <?php else : ?>
+        <!-- 未ログイン状態 -->
+        <a href="<?php echo $base_url; ?>/account/signin">ログイン</a>
+        <a href="<?php echo $base_url; ?>/account/signup">アカウント登録</a>
+      <?php endif; ?>
+    </p>
+  </div>
   <div class="main">
     <?php echo $_content; ?>
   </div>

@@ -66,4 +66,80 @@ class AccountController extends Controller
       '_token' => $this->generateCsrfToken('account/signup'),
     ), 'signup');
   }
+
+  /**
+   * セッションからユーザー情報を取得してビューファイルに渡す
+   */
+  public function indexAction()
+  {
+    $user = $this->session->get('user');
+    return $this->render(array('user' => $user));
+  }
+
+  public function signinAction()
+  {
+    //ログイン状態のチェック
+    if ($this->session->isAuthenticated()) {
+      return $this->redirect('/account');
+    }
+    return $this->render(array(
+      'user_name' => '',
+      'password' => '',
+      '_token' => $this->generateCsrfToken('account/signin'),
+    ));
+  }
+  public function authenticateAction()
+  {
+
+    //アクセスチェック
+    //ログイン状態か？POST送信か?CSRFトークンは正しいか?
+    if ($this->session->isAuthenticated()) {
+      return $this->redirect('/account');
+    }
+    if (!$this->request->isPost()) {
+      $this->forward404();
+    }
+    $token = $this->request->getPost('_token');
+    if (!$this->checkCsrfToken('account/signin', $token)) {
+      return $this->redirect('/account/signin');
+    }
+
+    $user_name = $this->request->getPost('user_name');
+    $password = $this->request->getPost('password');
+
+    /**バリデーション */
+    $errors = array();
+    if (!strlen($user_name)) {
+      $errors[] = 'ユーザーIDを入力してください';
+    }
+    if (!strlen($password)) {
+      $errors[] = 'パスワードを入力してください';
+    }
+
+    if (count($errors) === 0) {
+
+      $user_repository = $this->db_manager->get('User');
+      $user = $user_repository->fetchByUserName($user_name);
+
+      if (!$user || ($user['password'] !== $user_repository->hashPassword($password))) {
+        $errors[] = 'ユーザーIDかパスワードが不正です。';
+      } else {
+        $this->session->setAuthenticated(true);
+        $this->session->set('user', $user);
+        return $this->redirect('/');
+      }
+    }
+    return $this->render(array(
+      'user_name' => $user_name,
+      'password' => $password,
+      'errors' => $errors,
+      '_token' => $this->generateCsrfToken('account/signin'),
+    ), 'signin');
+  }
+  public function signoutAction()
+  {
+    $this->session->clear();
+    $this->session->setAuthenticated(false);
+    return $this->redirect('/account/signin');
+  }
 }

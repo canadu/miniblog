@@ -49,4 +49,27 @@ class StatusController extends Controller
       '_token' => $this->generateCsrfToken('status/post'),
     ), 'index');
   }
+
+  public function userAction($params)
+  {
+    //ユーザーの存在チェック
+    $user = $this->db_manager->get('User')->fetchByUserName($params['user_name']);
+    if (!$user) {
+      $this->forward404();
+    }
+    $statuses = $this->db_manager->get('Status')->fetchAllByUserId($user['id']);
+    return $this->render(array(
+      'user' => $user,
+      'statuses' => $statuses,
+    ));
+  }
+
+  public function showAction($params)
+  {
+    $status = $this->db_manager->get('Status')->fetchByIdAndUserName($params['id'], $params['user_name']);
+    if (!$status) {
+      $this->forward404();
+    }
+    return $this->render(array('status' => $status));
+  }
 }
