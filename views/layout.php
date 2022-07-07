@@ -7,6 +7,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title><?php if (isset($title)) : echo $this->escape($title) . ' - ';
           endif; ?>Mini Blog</title>
+  <link rel="stylesheet" href="/css/style.css">
 </head>
 
 <body>
