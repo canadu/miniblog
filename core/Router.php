@@ -1,7 +1,9 @@
 <?php
+
 /**
- * ユーザがアクセスしてきたURLをRequestクラスから受け取り、どのコントローラを呼び出すかを決定します。
+ * ユーザがアクセスしてきたURLをRequestクラスから受け取り、どのコントローラを呼び出すかを決定する
  * これにより物理的なディレクトリ構造に縛られないURLの制御を可能にします。
+ * 例えば "/user/info"というPathInfoをUserコントローラーのeditアクションに紐づけるというルールを定義する
  */
 /**
  * Router.
@@ -13,7 +15,7 @@ class Router
     /**
      * コンストラクタ
      *
-     * @param array $definitions
+     * @param array $definitions　ルーティング定義配列
      */
     public function __construct($definitions)
     {
@@ -31,15 +33,19 @@ class Router
         $routes = array();
 
         foreach ($definitions as $url => $params) {
+            // スラッシュで分割
             $tokens = explode('/', ltrim($url, '/'));
             foreach ($tokens as $i => $token) {
                 if (0 === strpos($token, ':')) {
+                    //コロンで始まる文字列が含まれている場合
                     $name = substr($token, 1);
+                    // 正規表現のキャプチャという機能を利用する
+                    // (:p<名前>パターン)とすると指定した名前でパターンを取得できる
                     $token = '(?P<' . $name . '>[^/]+)';
                 }
                 $tokens[$i] = $token;
             }
-
+            //スラッシュで文字列を連結
             $pattern = '/' . implode('/', $tokens);
             $routes[$pattern] = $params;
         }
@@ -56,13 +62,15 @@ class Router
     public function resolve($path_info)
     {
         if ('/' !== substr($path_info, 0, 1)) {
+            //引数の先頭がスラッシュでない場合、先頭にスラッシュを付与する
             $path_info = '/' . $path_info;
         }
 
         foreach ($this->routes as $pattern => $params) {
+            //正規表現を用いてマッチング
             if (preg_match('#^' . $pattern . '$#', $path_info, $matches)) {
                 $params = array_merge($params, $matches);
-
+                //$paramsにマージ
                 return $params;
             }
         }

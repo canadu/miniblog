@@ -69,8 +69,6 @@ class StatusController extends Controller
       }
     }
 
-
-
     return $this->render(array(
       'user' => $user,
       'statuses' => $statuses,

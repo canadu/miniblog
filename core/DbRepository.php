@@ -1,7 +1,8 @@
 <?php
+
 /**
  * データベースへのアクセスを伴う処理を管理するクラス。
- * データベースのテーブルごとにDbRepositoryの子クラスを作成する
+ * データベースのテーブル毎にDbRepositoryを継承させ、子クラスを作成する
  */
 abstract class DbRepository
 {
@@ -37,5 +38,4 @@ abstract class DbRepository
     //全ての行を取得
     return $this->execute($sql, $params)->fetchAll(PDO::FETCH_ASSOC);
   }
-
 }

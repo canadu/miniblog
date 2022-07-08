@@ -2,7 +2,9 @@
 
 /**
  * Request.
- *
+ * URL等のリクエストに対する処理を行う
+ * Base_URLとPath_infoに分解する
+ * HTTPメソッドの判定、GET、POSTなどの値の取得、リクエストされてURLの取得などを行う
  */
 class Request
 {
@@ -86,31 +88,35 @@ class Request
    */
   public function getRequestUri()
   {
+    //ホスト部より後の値が格納されている
     return $_SERVER['REQUEST_URI'];
   }
 
   /**
-   * ベースURLを取得
+   * ベースURL(ドメイン以降からフロントコントローラーまでの値)を取得
+   *
    *
    * @return string
    */
   public function getBaseUrl()
   {
+    //現在のスクリプトのパス（フロントコントローラーまでのパスが含まれている）
     $script_name = $_SERVER['SCRIPT_NAME'];
 
     $request_uri = $this->getRequestUri();
 
     if (0 === strpos($request_uri, $script_name)) {
+      //フロントコントローラーがURLに含まれている場合
       return $script_name;
     } else if (0 === strpos($request_uri, dirname($script_name))) {
+      // フロントコントローラーが省略されている場合
       return rtrim(dirname($script_name), '/');
     }
-
     return '';
   }
 
   /**
-   * PATH_INFOを取得
+   * PATH_INFO(ベースURLより後ろの値)を取得
    *
    * @return string
    */
@@ -119,10 +125,12 @@ class Request
     $base_url = $this->getBaseUrl();
     $request_uri = $this->getRequestUri();
 
+    //ゲットパラメーターを取り除いた値を取得する
     if (false !== ($pos = strpos($request_uri, '?'))) {
       $request_uri = substr($request_uri, 0, $pos);
     }
 
+    #request_uriからベースURL部分を除いた値をpathinfoとして取得する
     $path_info = (string)substr($request_uri, strlen($base_url));
 
     return $path_info;

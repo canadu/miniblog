@@ -1,4 +1,5 @@
 <?php
+
 class MiniBlogApplication extends Application
 {
   protected $login_action = array('account', 'signin');
@@ -12,6 +13,7 @@ class MiniBlogApplication extends Application
   }
 
   /**
+   * ルーティングの設定を行う
    * ルーティング定義配列を返す
    */
   protected function registerRoutes()

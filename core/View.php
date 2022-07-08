@@ -1,4 +1,9 @@
 <?php
+
+/**
+ * Viewファイルで必要な変数をロードする
+ * Viewファイルの読み込み、レイアウトの読み込みを行う
+ */
 class View
 {
   protected $base_dir;
@@ -31,11 +36,15 @@ class View
     require $_file;
     $content = ob_get_clean();
     if ($_layout) {
-      $content = $this->render($_layout,
-        array_merge($this->layout_variables,array(
-                    '_content' => $content,
-                  )
-        ));
+      $content = $this->render(
+        $_layout,
+        array_merge(
+          $this->layout_variables,
+          array(
+            '_content' => $content,
+          )
+        )
+      );
     }
     return $content;
   }
@@ -44,5 +53,4 @@ class View
   {
     return htmlspecialchars($string, ENT_QUOTES, 'UTF-8');
   }
-
 }

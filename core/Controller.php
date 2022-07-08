@@ -2,7 +2,7 @@
 
 /**
  * Controller.
- *
+ * ViewとDBからの情報を取得し、Responseに渡す
  */
 abstract class Controller
 {

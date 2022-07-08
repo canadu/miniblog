@@ -2,8 +2,9 @@
 
 /**
  * Application.
- *
+ * アプリケーション全体を表すクラス。アプリケーションの全体の流れを管理する
  */
+
 abstract class Application
 {
   protected $debug = false;
@@ -172,7 +173,10 @@ abstract class Application
   public function run()
   {
     try {
+
+      // コントローラとアクションを特定する
       $params = $this->router->resolve($this->request->getPathInfo());
+
       if ($params === false) {
         throw new HttpNotFoundException('No route found for ' . $this->request->getPathInfo());
       }
@@ -180,6 +184,7 @@ abstract class Application
       $controller = $params['controller'];
       $action = $params['action'];
 
+      #アクションを実行する
       $this->runAction($controller, $action, $params);
     } catch (HttpNotFoundException $e) {
       $this->render404Page($e);
@@ -188,6 +193,7 @@ abstract class Application
       $this->runAction($controller, $action);
     }
 
+    #結果を送信し、画面表示する
     $this->response->send();
   }
 
@@ -216,7 +222,6 @@ abstract class Application
 
   /**
    * 指定されたコントローラ名から対応するControllerオブジェクトを取得
-   *
    * @param string $controller_class
    * @return Controller
    */

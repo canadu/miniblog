@@ -1,4 +1,8 @@
 <?php
+
+/**
+ * セッションの管理。認証も担当
+ */
 class Session
 {
   protected static $sessionStarted = false;
@@ -19,8 +23,7 @@ class Session
 
   public function get($name, $default = null)
   {
-    if (isset($_SESSION[$name]))
-    {
+    if (isset($_SESSION[$name])) {
       return $_SESSION[$name];
     }
     return $default;
@@ -41,8 +44,7 @@ class Session
    */
   public function regenerate($destroy = true)
   {
-    if (!self::$sessionIdRegenerated)
-    {
+    if (!self::$sessionIdRegenerated) {
       session_regenerate_id($destroy);
       self::$sessionIdRegenerated = true;
     }
@@ -60,7 +62,6 @@ class Session
 
   public function isAuthenticated()
   {
-    return $this->get('_authenticated',false);
+    return $this->get('_authenticated', false);
   }
-
 }

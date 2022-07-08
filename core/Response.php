@@ -2,6 +2,7 @@
 
 /**
  * リクエストに対するレスポンス。最終的にユーザーへ返すレスポンシ情報を管理する
+ * （Viewから受け取ったブラウザに描画したい内容をechoで表示。HTTPレスポンスを返す）
  */
 class Response
 {
@@ -15,7 +16,10 @@ class Response
    */
   public function send()
   {
+    //ステータスコードの指定を行っている
     header('HTTP/1.1' . $this->status_code . ' ' . $this->status_code);
+
+    //HTTPレスポンスヘッダの指定があれば、header関数を用いて送信する
     foreach ($this->http_headers as $name => $value) {
       header($name . ': ' . $value);
     }
