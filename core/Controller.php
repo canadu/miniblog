@@ -55,6 +55,7 @@ abstract class Controller
     //アクションにあたるメソッド名はアクション名 + Action()というルールで扱う
     $action_method = $action . 'Action';
 
+    //クラスにメソッド名が存在するのか確認
     if (!method_exists($this, $action_method)) {
       $this->forward404();
     }
