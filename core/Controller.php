@@ -3,6 +3,16 @@
 /**
  * Controller.
  * ViewとDBからの情報を取得し、Responseに渡す
+ * アクションと呼ばれるメソッドを定義する。
+ * 例えばユーザー情報を扱うならば、UserControllerクラスを作成し、editAction(ユーザー編集)、newAction(ユーザー追加)というメソッドを定義する
+ *
+ * アクションを実行する > run
+ * ビューファイルをレンダリングし、内部でViewクラスを呼び出す > render
+ * リダイレクトを行う > redirect
+ * 404エラー画面に遷移する > forward404
+ * CSRF対策を行う > generateCsrfToken,checkCsrfToken
+ * ログイン状態の制御機能 > runメソッドの内部
+ *
  */
 abstract class Controller
 {
@@ -37,22 +47,22 @@ abstract class Controller
    * @param string $action
    * @param array $params
    * @return string レスポンスとして返すコンテンツ
-   *
    * @throws UnauthorizedActionException 認証が必須なアクションに認証前にアクセスした場合
    */
   public function run($action, $params = array())
   {
     $this->action_name = $action;
-
+    //アクションにあたるメソッド名はアクション名 + Action()というルールで扱う
     $action_method = $action . 'Action';
+
     if (!method_exists($this, $action_method)) {
       $this->forward404();
     }
-
+    // ログインが必要かどうかの判定をおこなうメソッド
     if ($this->needsAuthentication($action) && !$this->session->isAuthenticated()) {
       throw new UnauthorizedActionException();
     }
-
+    //アクションの実行
     $content = $this->$action_method($params);
 
     return $content;
@@ -68,18 +78,21 @@ abstract class Controller
    */
   protected function render($variables = array(), $template = null, $layout = 'layout')
   {
+
     $defaults = array(
       'request'  => $this->request,
       'base_url' => $this->request->getBaseUrl(),
       'session'  => $this->session,
     );
 
+    //Viewクラスのインスタンスを作成
     $view = new View($this->application->getViewDir(), $defaults);
 
+    //nullの場合、アクション名をファイル名として利用する
     if (is_null($template)) {
       $template = $this->action_name;
     }
-
+    // コントローラー名をテンプレー名の先頭に付与する
     $path = $this->controller_name . '/' . $template;
 
     return $view->render($path, $variables, $layout);
@@ -128,7 +141,7 @@ abstract class Controller
     if (count($tokens) >= 10) {
       array_shift($tokens);
     }
-
+    //フォーム名 + session_id + microtime の値をSHA1ハッシュ知を作成
     $token = sha1($form_name . session_id() . microtime());
     $tokens[] = $token;
 

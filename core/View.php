@@ -10,12 +10,20 @@ class View
   protected $defaults;
   protected $layout_variables = array();
 
+  /**
+   * コンストラクタ
+   * @param viewsディレクトリへの絶対パス
+   * @param ビューファイルに渡す変数を指定
+   */
   public function __construct($base_dir, $defaults = array())
   {
     $this->base_dir = $base_dir;
     $this->defaults = $defaults;
   }
 
+  /**
+   *
+   */
   public function setLayoutVar($name, $value)
   {
     $this->layout_variables[$name] = $value;
@@ -30,11 +38,20 @@ class View
   public function render($_path, $_variables = array(), $_layout = false)
   {
     $_file = $this->base_dir . '/' . $_path . '.php';
+
+    //連想配列を変数に変換。キーが変数名となる
     extract(array_merge($this->defaults, $_variables));
+
+    //アウトプットバッファリングを開始
     ob_start();
+    //バッファの自動フラッシュを制御
     ob_implicit_flush(0);
+
     require $_file;
+
+    // バッファの内容を変数に格納
     $content = ob_get_clean();
+
     if ($_layout) {
       $content = $this->render(
         $_layout,
@@ -48,6 +65,7 @@ class View
     }
     return $content;
   }
+
 
   public function escape($string)
   {

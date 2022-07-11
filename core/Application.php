@@ -3,6 +3,7 @@
 /**
  * Application.
  * アプリケーション全体を表すクラス。アプリケーションの全体の流れを管理する
+ * アプリケーション毎にこのクラスを継承したクラスを定義し、アプリケーション固有の設定を行う
  */
 
 abstract class Application
@@ -56,6 +57,7 @@ abstract class Application
 
   /**
    * アプリケーションの設定
+   * アプリケーション特有の設定を行うために定義
    */
   protected function configure()
   {
@@ -173,8 +175,7 @@ abstract class Application
   public function run()
   {
     try {
-
-      // コントローラとアクションを特定する
+      // ルーティングパラメーターを取得し、コントローラーとアクション名を特定する
       $params = $this->router->resolve($this->request->getPathInfo());
 
       if ($params === false) {
@@ -208,15 +209,15 @@ abstract class Application
    */
   public function runAction($controller_name, $action, $params = array())
   {
+    //コントローラーのクラス名はコントローラー名にControllerを付ける
+    //先頭を大文字にする
     $controller_class = ucfirst($controller_name) . 'Controller';
 
     $controller = $this->findController($controller_class);
     if ($controller === false) {
       throw new HttpNotFoundException($controller_class . ' controller is not found.');
     }
-
     $content = $controller->run($action, $params);
-
     $this->response->setContent($content);
   }
 

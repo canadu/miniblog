@@ -10,6 +10,7 @@ class Session
 
   public function __construct()
   {
+    //複数回呼び出される事が無いように静的プロパティでチェックする
     if (!self::$sessionStarted) {
       session_start();
       self::$sessionStarted = true;
@@ -52,7 +53,6 @@ class Session
 
   /**
    * ログイン状態の制御
-   * _authenticatedというキーでログインしているかどうかの判定を行う
    */
   public function setAuthenticated($bool)
   {
@@ -60,6 +60,9 @@ class Session
     $this->regenerate();
   }
 
+  /**
+   * _authenticatedというキーでログインしているかどうかの判定を行う
+   */
   public function isAuthenticated()
   {
     return $this->get('_authenticated', false);

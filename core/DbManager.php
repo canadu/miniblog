@@ -53,12 +53,19 @@ class DbManager
     return $con;
   }
 
+  /**
+   * インスタンスの生成を行う
+   * Repository名が$repositoriesに入っていない場合のみ生成を行う
+   */
   public function get($repository_name)
   {
     if (!isset($this->repositories[$repository_name])) {
+      //クラス名 = 名前+Repository とするのがルール
       $repository_class = $repository_name . 'Repository';
+      //コネクション取得
       $con = $this->getConnectionForRepository($repository_name);
       $repository = new $repository_class($con);
+      //インスタンスを保持するためプロパティに設定する
       $this->repositories[$repository_name] = $repository;
     }
     return $this->repositories[$repository_name];
@@ -69,6 +76,7 @@ class DbManager
    */
   public function __destruct()
   {
+    //Repository内でも接続情報を参照しているため先にRepositoryのインスタンスを破棄する
     foreach ($this->repositories as $repository) {
       unset($repository);
     }

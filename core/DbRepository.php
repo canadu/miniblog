@@ -3,11 +3,13 @@
 /**
  * データベースへのアクセスを伴う処理を管理するクラス。
  * データベースのテーブル毎にDbRepositoryを継承させ、子クラスを作成する
+ * このフレームワークではモデルに相当する
  */
 abstract class DbRepository
 {
   protected $con;
 
+  //PDOクラスのインスタンスを受け取る
   public function __construct($con)
   {
     $this->setConnection($con);
@@ -22,6 +24,7 @@ abstract class DbRepository
   {
     //PDOStatementクラスのインスタンスが返ってくる
     $stmt = $this->con->prepare($sql);
+    //
     $stmt->execute($params);
     return $stmt;
   }
@@ -36,6 +39,7 @@ abstract class DbRepository
   public function fetchAll($sql, $params = array())
   {
     //全ての行を取得
+    //FETCH_ASSOC→取得結果を連想配列で受け取る
     return $this->execute($sql, $params)->fetchAll(PDO::FETCH_ASSOC);
   }
 }
