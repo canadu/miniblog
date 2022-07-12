@@ -2,8 +2,17 @@
 
 /**
  * Application.
- * アプリケーション全体を表すクラス。アプリケーションの全体の流れを管理する
- * アプリケーション毎にこのクラスを継承したクラスを定義し、アプリケーション固有の設定を行う
+ *
+ * Request クラスや Router クラス、Response クラス、
+ * Session クラスなどのオブジェクトの管理を行うほか、
+ * ルーティングの定義、コントローラの実行、レスポンスの送信など、
+ * アプリケーション全体の流れを司る
+ *
+ * また、管理するのはオブジェクトだけではなく、
+ * アプリケーションの様々なディレクトリヘのパスの管理なども行う
+ *
+ * この他にも、デバッグモードで実行できるような機能も持たせます
+ *
  */
 
 abstract class Application
@@ -175,17 +184,21 @@ abstract class Application
   public function run()
   {
     try {
-      // ルーティングパラメーターを取得し、コントローラーとアクション名を特定する
+
+      // ルーティングパラメーターを取得し、コントローラーとアクション名の配列を受け取る
       $params = $this->router->resolve($this->request->getPathInfo());
 
       if ($params === false) {
         throw new HttpNotFoundException('No route found for ' . $this->request->getPathInfo());
       }
 
+      //コントローラーを変数に設定
       $controller = $params['controller'];
+
+      //アクションを変数に設定
       $action = $params['action'];
 
-      #アクションを実行する
+      // アクションを実行する
       $this->runAction($controller, $action, $params);
     } catch (HttpNotFoundException $e) {
       $this->render404Page($e);
@@ -194,7 +207,7 @@ abstract class Application
       $this->runAction($controller, $action);
     }
 
-    #結果を送信し、画面表示する
+    // 結果を送信し、画面表示する
     $this->response->send();
   }
 
@@ -213,11 +226,17 @@ abstract class Application
     //先頭を大文字にする
     $controller_class = ucfirst($controller_name) . 'Controller';
 
+    //コントローラーオブジェクトを取得
     $controller = $this->findController($controller_class);
+
     if ($controller === false) {
       throw new HttpNotFoundException($controller_class . ' controller is not found.');
     }
+
+    //アクションを実行する
     $content = $controller->run($action, $params);
+
+    //クライアントに返す内容をプロパティに設定する
     $this->response->setContent($content);
   }
 
@@ -233,14 +252,13 @@ abstract class Application
       if (!is_readable($controller_file)) {
         return false;
       } else {
+        //コントローラーファイルの読み込み
         require_once $controller_file;
-
         if (!class_exists($controller_class)) {
           return false;
         }
       }
     }
-
     return new $controller_class($this);
   }
 

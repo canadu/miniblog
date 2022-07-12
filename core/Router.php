@@ -36,7 +36,7 @@ class Router
             $tokens = explode('/', ltrim($url, '/'));
             foreach ($tokens as $i => $token) {
                 if (0 === strpos($token, ':')) {
-                    //コロンで始まる文字列が含まれている場合
+                    // : で始まる文字列があったとき、正規表現の形式に変換する
                     $name = substr($token, 1);
                     // 正規表現のキャプチャという機能を利用する
                     // (:p<名前>パターン)とすると指定した名前でパターンを取得できる
@@ -44,7 +44,7 @@ class Router
                 }
                 $tokens[$i] = $token;
             }
-            //スラッシュで文字列を連結
+            // implode — 配列要素を文字列により連結する
             $pattern = '/' . implode('/', $tokens);
             $routes[$pattern] = $params;
         }
@@ -68,6 +68,10 @@ class Router
         foreach ($this->routes as $pattern => $params) {
             //正規表現を用いてマッチング
             if (preg_match('#^' . $pattern . '$#', $path_info, $matches)) {
+
+                // array_merge - 配列を連結する
+                // array('controller' => 'user', 'action' => 'show') に
+                // array('id' => '1') が加わる
                 $params = array_merge($params, $matches);
                 //$paramsにマージ
                 return $params;

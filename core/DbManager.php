@@ -1,7 +1,8 @@
 <?php
 
 /**
- * データベースへの接続情報やDbRepositryを管理するクラス
+ * PDO クラスのインスタンスがデータベースとの接続情報になるので、
+ * DbManager ではその管理を行う
  */
 class DbManager
 {
@@ -65,6 +66,7 @@ class DbManager
       //コネクション取得
       $con = $this->getConnectionForRepository($repository_name);
       $repository = new $repository_class($con);
+
       //インスタンスを保持するためプロパティに設定する
       $this->repositories[$repository_name] = $repository;
     }

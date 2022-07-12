@@ -1,10 +1,11 @@
 <?php
 
 /**
- * データベースへのアクセスを伴う処理を管理するクラス。
- * データベースのテーブル毎にDbRepositoryを継承させ、子クラスを作成する
+ * テーブルからのデータ取得等のCRUDを担当しています。
+ * テーブル毎にDbRepositoryを継承させ、子クラスを作成する
  * このフレームワークではモデルに相当する
  */
+
 abstract class DbRepository
 {
   protected $con;

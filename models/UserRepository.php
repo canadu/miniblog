@@ -2,6 +2,9 @@
 class UserRepository extends DbRepository
 {
 
+  /**
+   * ユーザーを新規登録する
+   */
   public function insert($user_name, $password)
   {
     $password = $this->hashPassword($password);
@@ -14,6 +17,9 @@ class UserRepository extends DbRepository
     ));
   }
 
+  /**
+   * パスワードのハッシュ化
+   */
   public function hashPassword($password)
   {
     return sha1($password . 'SecretKey');

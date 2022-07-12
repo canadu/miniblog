@@ -1,5 +1,14 @@
 <?php
 
+/**
+ * P271 アクションの作成手順
+ * 1. データベースアクセス処理を Repository クラスに定義
+ * 2. ルーティングを MiniBlogApplication クラスに定義
+ * 3. コントローラクラスを定義
+ * 4. コントローラクラスにアクションを定義
+ * 5. アクションのビューファイルを記述
+ */
+
 class MiniBlogApplication extends Application
 {
   protected $login_action = array('account', 'signin');

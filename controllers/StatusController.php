@@ -4,10 +4,16 @@ class StatusController extends Controller
 
   protected $auth_actions = array('index', 'post');
 
+  /**
+   * ログインしているユーザーのホームを表示する
+   */
   public function indexAction()
   {
+    //セッションからユーザー情報を取得
     $user = $this->session->get('user');
+    //ログインユーザーに関連する投稿を取得
     $statuses = $this->db_manager->get('Status')->fetchAllPersonalArchivesByUserId($user['id']);
+
     return $this->render(array(
       'statuses' => $statuses,
       'body' => '',
@@ -15,20 +21,27 @@ class StatusController extends Controller
     ));
   }
 
+  /**
+   * 投稿処理
+   */
   public function postAction()
   {
+
+    //アクセスチェック
     if (!$this->request->isPost()) {
       $this->forward404();
     }
-
     $token = $this->request->getPost('_token');
     if (!$this->checkCsrfToken('status/post', $token)) {
       return $this->redirect('/');
     }
 
+    //投稿情報の取得
     $body = $this->request->getPost('body');
+
     $errors = array();
 
+    //バリデーション
     if (!strlen($body)) {
       $errors[] = 'ひとことを入力してください。';
     } else if (mb_strlen($body) > 200) {
@@ -36,14 +49,24 @@ class StatusController extends Controller
     }
 
     if (count($errors) === 0) {
+      //====正常処理==================
+      //セッションからユーザー情報を取得
       $user = $this->session->get('user');
+
+      //ユーザーIDと投稿データをDBに保存
       $this->db_manager->get('Status')->insert($user['id'], $body);
+
+      //リダイレクト
       return $this->redirect('/');
     }
 
+    //セッションからユーザー情報を取得
     $user = $this->session->get('user');
+
+    //ログインユーザーに関連する投稿を取得
     $statuses = $this->db_manager->get('Status')->fetchAllPersonalArchivesByUserId($user['id']);
 
+    //エラーの場合は再度post.phpをレンダリングしてエラーを表示する
     return $this->render(array(
       'errors' => $errors,
       'body' => $body,
@@ -52,6 +75,7 @@ class StatusController extends Controller
     ), 'index');
   }
 
+
   public function userAction($params)
   {
     //ユーザーの存在チェック
@@ -59,6 +83,8 @@ class StatusController extends Controller
     if (!$user) {
       $this->forward404();
     }
+
+    //ユーザーの投稿一覧の取得
     $statuses = $this->db_manager->get('Status')->fetchAllByUserId($user['id']);
 
     $following = null;
@@ -77,8 +103,10 @@ class StatusController extends Controller
     ));
   }
 
+
   public function showAction($params)
   {
+    // ユーザーの投稿を1件取得
     $status = $this->db_manager->get('Status')->fetchByIdAndUserName($params['id'], $params['user_name']);
     if (!$status) {
       $this->forward404();

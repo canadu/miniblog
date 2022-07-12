@@ -122,7 +122,10 @@ class Request
    */
   public function getPathInfo()
   {
+    // ベースURL(ドメイン以降からフロントコントローラーまでの値)を取得
     $base_url = $this->getBaseUrl();
+
+    //リクエストURIを取得
     $request_uri = $this->getRequestUri();
 
     //ゲットパラメーターを取り除いた値を取得する
