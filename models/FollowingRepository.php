@@ -1,4 +1,10 @@
 <?php
+
+/**
+ * ログイン中に他のユーザの投稿一覧画面を開いた際、
+ * 未フォローであればフォローボタンを表示し、
+ * フォロー済みであればメッセージを出力する
+ */
 class FollowingRepository extends DbRepository
 {
   /**

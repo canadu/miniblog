@@ -132,6 +132,7 @@ class AccountController extends Controller
       return $this->redirect('/account/signin');
     }
 
+    //フォームの入力内容を変数に格納
     $user_name = $this->request->getPost('user_name');
     $password = $this->request->getPost('password');
 
