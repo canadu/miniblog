@@ -1,6 +1,11 @@
 <?php
 class UserRepository extends DbRepository
 {
+  /*
+  insert:レコードを新規登録するメソッド名で使用する
+  fetch:レコードを取得する場合に使用する 複数の場合:fetchAll
+  **/
+
 
   /**
    * ユーザーを新規登録する

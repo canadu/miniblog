@@ -49,6 +49,7 @@ class MiniBlogApplication extends Application
 
   /**
    * アプリケーションの設定を行うメソッド
+   * ここではDBへの接続設定を記述する
    */
   protected function configure()
   {

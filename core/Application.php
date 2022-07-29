@@ -13,6 +13,7 @@
  *
  * この他にも、デバッグモードで実行できるような機能も持たせます
  *
+ *
  */
 
 abstract class Application
@@ -31,6 +32,7 @@ abstract class Application
   public function __construct($debug = false)
   {
     $this->setDebugMode($debug);
+    //各クラスをインスタンス化してプロパティに設定
     $this->initialize();
     $this->configure();
   }
@@ -185,7 +187,7 @@ abstract class Application
   {
     try {
 
-      // ルーティングパラメーターを取得し、コントローラーとアクション名の配列を受け取る
+      //ルーティングパラメーターを取得し、コントローラーとアクション名の配列を受け取る
       $params = $this->router->resolve($this->request->getPathInfo());
 
       if ($params === false) {
@@ -230,6 +232,7 @@ abstract class Application
     $controller = $this->findController($controller_class);
 
     if ($controller === false) {
+      //コントローラークラスのphpファイルが見つからない場合エラーをスローする
       throw new HttpNotFoundException($controller_class . ' controller is not found.');
     }
 
