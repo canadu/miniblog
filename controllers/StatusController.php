@@ -42,7 +42,7 @@ class StatusController extends Controller
     $errors = array();
 
     //バリデーション
-    if (!strlen($body)) {
+    if (!mb_strlen($body)) {
       $errors[] = 'ひとことを入力してください。';
     } else if (mb_strlen($body) > 200) {
       $errors[] = 'ひとことは200文字以内で入力してください';
@@ -74,7 +74,6 @@ class StatusController extends Controller
       '_token' => $this->generateCsrfToken('status/post'),
     ), 'index');
   }
-
 
   public function userAction($params)
   {

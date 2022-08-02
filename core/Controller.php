@@ -57,6 +57,7 @@ abstract class Controller
 
     //クラスにメソッド名が存在するのか確認
     if (!method_exists($this, $action_method)) {
+      //存在しない場合はエラー
       $this->forward404();
     }
     // ログインが必要かどうかの判定をおこなうメソッド
@@ -140,6 +141,7 @@ abstract class Controller
     $key = 'csrf_tokens/' . $form_name;
     $tokens = $this->session->get($key, array());
     if (count($tokens) >= 10) {
+      //配列からkeyを削除
       array_shift($tokens);
     }
     //フォーム名 + session_id + microtime の値をSHA1ハッシュ知を作成

@@ -41,7 +41,7 @@ class AccountController extends Controller
 
     //バリデーション
     $errors = array();
-    if (!strlen($user_name)) {
+    if (!mb_strlen($user_name)) {
       $errors[] = 'ユーザーIDを入力して下さい';
     } else if (!preg_match('/^\w{3,20}$/', $user_name)) {
       $errors[] = 'ユーザーIDは半角英数字およびアンダースコアを3～20文字で入力して下さい';
@@ -49,9 +49,9 @@ class AccountController extends Controller
       $errors[] = 'ユーザーIDは既に使用されています。';
     }
 
-    if (!strlen($password)) {
+    if (!mb_strlen($password)) {
       $errors[] = 'パスワードを入力して下さい';
-    } else if (4 > strlen($password) || strlen($password) > 30) {
+    } else if (4 > mb_strlen($password) || mb_strlen($password) > 30) {
       $errors[] = 'パスワードは4～30文字以内で入力して下さい';
     }
 
@@ -138,10 +138,10 @@ class AccountController extends Controller
 
     /**バリデーション */
     $errors = array();
-    if (!strlen($user_name)) {
+    if (!mb_strlen($user_name)) {
       $errors[] = 'ユーザーIDを入力してください';
     }
-    if (!strlen($password)) {
+    if (!mb_strlen($password)) {
       $errors[] = 'パスワードを入力してください';
     }
 

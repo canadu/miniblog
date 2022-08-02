@@ -134,7 +134,7 @@ class Request
     }
 
     #request_uriからベースURL部分を除いた値をpathinfoとして取得する
-    $path_info = (string)substr($request_uri, strlen($base_url));
+    $path_info = (string)substr($request_uri, mb_strlen($base_url));
 
     return $path_info;
   }
