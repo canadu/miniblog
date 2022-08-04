@@ -1,3 +1,4 @@
+<!-- 共通デザインののレイアウトファイル -->
 <!DOCTYPE html>
 <html lang="ja">
 
@@ -5,6 +6,7 @@
   <meta charset="UTF-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <!-- $title変数が設定されている場合はtitle要素内に設定されたタイトルを出力する -->
   <title><?php if (isset($title)) : echo $this->escape($title) . ' - ';
           endif; ?>Mini Blog</title>
   <link rel="stylesheet" href="/css/style.css">
@@ -28,6 +30,7 @@
     </p>
   </div>
   <div class="main">
+    <!-- $_content変数にアクションを毎のHTMLが格納される -->
     <?php echo $_content; ?>
   </div>
 </body>

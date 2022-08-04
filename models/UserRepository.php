@@ -2,16 +2,17 @@
 class UserRepository extends DbRepository
 {
   /*
+  SQLを実行するうえで必要な情報はControllerクラスで取得し、Repositoryクラスはメソッドを呼び出す際に引数で情報を受け取るようになる
   insert:レコードを新規登録するメソッド名で使用する
   fetch:レコードを取得する場合に使用する 複数の場合:fetchAll
   **/
-
 
   /**
    * ユーザーを新規登録する
    */
   public function insert($user_name, $password)
   {
+    //パスワードはハッシュ化した上でDBに登録する
     $password = $this->hashPassword($password);
     $now = new DateTime();
     $sql = "INSERT INTO user(user_name, password, created_at) VALUES(:user_name, :password, :created_at)";

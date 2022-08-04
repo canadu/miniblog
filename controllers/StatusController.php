@@ -2,6 +2,7 @@
 class StatusController extends Controller
 {
 
+  //認証が必要なアクションを変数に格納する
   protected $auth_actions = array('index', 'post');
 
   /**
@@ -11,12 +12,14 @@ class StatusController extends Controller
   {
     //セッションからユーザー情報を取得
     $user = $this->session->get('user');
+
     //ログインユーザーに関連する投稿を取得
     $statuses = $this->db_manager->get('Status')->fetchAllPersonalArchivesByUserId($user['id']);
 
     return $this->render(array(
       'statuses' => $statuses,
       'body' => '',
+      //トークンを作成する
       '_token' => $this->generateCsrfToken('status/post'),
     ));
   }
@@ -29,10 +32,14 @@ class StatusController extends Controller
 
     //アクセスチェック
     if (!$this->request->isPost()) {
+      //404エラー画面
       $this->forward404();
     }
+
+    //トークンを取得
     $token = $this->request->getPost('_token');
     if (!$this->checkCsrfToken('status/post', $token)) {
+      //ホームにリダイレクト
       return $this->redirect('/');
     }
 
@@ -71,10 +78,14 @@ class StatusController extends Controller
       'errors' => $errors,
       'body' => $body,
       'statuses' => $statuses,
+      //トークンを作成する
       '_token' => $this->generateCsrfToken('status/post'),
     ), 'index');
   }
 
+  /**
+   * ユーザーIDを指定して、特定ユーザーの一覧を取得する
+   */
   public function userAction($params)
   {
     //ユーザーの存在チェック
@@ -98,11 +109,14 @@ class StatusController extends Controller
       'user' => $user,
       'statuses' => $statuses,
       'following' => $following,
+      //トークンを作成する
       '_token' => $this->generateCsrfToken('account/follow'),
     ));
   }
 
-
+  /**
+   *投稿IDを指定して、特定の投稿を表示する
+   */
   public function showAction($params)
   {
     // ユーザーの投稿を1件取得

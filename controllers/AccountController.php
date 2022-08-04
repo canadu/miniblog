@@ -2,6 +2,7 @@
 class AccountController extends Controller
 {
 
+  //認証が必要なアクションを変数に格納する
   protected $auth_actions = array('index', 'signout', 'follow');
 
   /**
@@ -13,6 +14,7 @@ class AccountController extends Controller
     return $this->render(array(
       'user_name' => '',
       'password' => '',
+      //トークンを作成する
       '_token' => $this->generateCsrfToken('account/signup'),
     ));
   }
@@ -80,6 +82,7 @@ class AccountController extends Controller
       'user_name' => $user_name,
       'password' => $password,
       'errors' => $errors,
+      //トークンを作成する
       '_token' => $this->generateCsrfToken('account/signup'),
     ), 'signup');
   }
@@ -109,6 +112,7 @@ class AccountController extends Controller
     return $this->render(array(
       'user_name' => '',
       'password' => '',
+      //トークンを作成する
       '_token' => $this->generateCsrfToken('account/signin'),
     ));
   }
@@ -120,13 +124,15 @@ class AccountController extends Controller
   {
 
     //アクセスチェック
-    //ログイン状態か？POST送信か?CSRFトークンは正しいか?
+    //ログイン状態か？
     if ($this->session->isAuthenticated()) {
       return $this->redirect('/account');
     }
+    //POST送信か?
     if (!$this->request->isPost()) {
       $this->forward404();
     }
+    //CSRFトークンは正しいか?
     $token = $this->request->getPost('_token');
     if (!$this->checkCsrfToken('account/signin', $token)) {
       return $this->redirect('/account/signin');
@@ -148,13 +154,21 @@ class AccountController extends Controller
     if (count($errors) === 0) {
 
       $user_repository = $this->db_manager->get('User');
+
+      //ユーザーIDから名前を取得する
       $user = $user_repository->fetchByUserName($user_name);
 
       if (!$user || ($user['password'] !== $user_repository->hashPassword($password))) {
         $errors[] = 'ユーザーIDかパスワードが不正です。';
       } else {
+
+        //ログイン状態の制御
         $this->session->setAuthenticated(true);
+
+        //DBから取得したユーザー情報をセッションにセット
         $this->session->set('user', $user);
+
+        //ユーザーホームページへリダイレクト
         return $this->redirect('/');
       }
     }
@@ -162,6 +176,7 @@ class AccountController extends Controller
       'user_name' => $user_name,
       'password' => $password,
       'errors' => $errors,
+      //トークンを作成する
       '_token' => $this->generateCsrfToken('account/signin'),
     ), 'signin');
   }
