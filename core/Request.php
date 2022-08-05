@@ -103,8 +103,10 @@ class Request
     //現在のスクリプトのパス（フロントコントローラーまでのパスが含まれている）
     $script_name = $_SERVER['SCRIPT_NAME'];
 
+    //リクエストのURIを取得
     $request_uri = $this->getRequestUri();
 
+    //$request_uriの中で$script_nameの文字列が最初に現れる箇所を取得
     if (0 === strpos($request_uri, $script_name)) {
       //フロントコントローラーがURLに含まれている場合
       return $script_name;

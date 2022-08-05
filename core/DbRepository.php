@@ -43,4 +43,19 @@ abstract class DbRepository
     //FETCH_ASSOC→取得結果を連想配列で受け取る
     return $this->execute($sql, $params)->fetchAll(PDO::FETCH_ASSOC);
   }
+
+  public function beginTransaction()
+  {
+    $this->con->beginTransaction();
+  }
+
+  public function commit()
+  {
+    $this->con->commit();
+  }
+
+  public function rollBack()
+  {
+    $this->con->rollBack();
+  }
 }

@@ -56,6 +56,7 @@ class View
 
     //アウトプットバッファリングを開始
     ob_start();
+
     //バッファの自動フラッシュを制御
     ob_implicit_flush(0);
 
