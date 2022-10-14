@@ -16,11 +16,23 @@ abstract class DbRepository
     $this->setConnection($con);
   }
 
+  /**
+   * コネクションを設定
+   *
+   * @param PDO $con
+   */
   public function setConnection($con)
   {
     $this->con = $con;
   }
 
+  /**
+   * クエリを実行
+   *
+   * @param string $sql
+   * @param array $params
+   * @return PDOStatement $stmt
+   */
   public function execute($sql, $params = array())
   {
     //PDOStatementクラスのインスタンスが返ってくる
@@ -30,6 +42,13 @@ abstract class DbRepository
     return $stmt;
   }
 
+  /**
+   * クエリを実行し、結果を1行取得
+   *
+   * @param string $sql
+   * @param array $params
+   * @return array
+   */
   //Select文を実行した際の実行結果を取得
   public function fetch($sql, $params = array())
   {
@@ -37,6 +56,13 @@ abstract class DbRepository
     return $this->execute($sql, $params)->fetch(PDO::FETCH_ASSOC);
   }
 
+  /**
+   * クエリを実行し、結果をすべて取得
+   *
+   * @param string $sql
+   * @param array $params
+   * @return array
+   */
   public function fetchAll($sql, $params = array())
   {
     //全ての行を取得

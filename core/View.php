@@ -33,7 +33,10 @@ class View
   }
 
   /**
+   * レイアウトに渡す変数を指定
    *
+   * @param string $name
+   * @param mixed $value
    */
   public function setLayoutVar($name, $value)
   {
@@ -41,6 +44,7 @@ class View
   }
 
   /**
+   * ビューファイルをレンダリング
    * 実際にビューファイルの読み込みを行うメソッド
    * @param ビューファイルへのパス
    * @param ビューファイルに渡す変数を指定
@@ -79,7 +83,12 @@ class View
     return $content;
   }
 
-
+  /**
+   * 指定された値をHTMLエスケープする
+   *
+   * @param string $string
+   * @return string
+   */
   public function escape($string)
   {
     return htmlspecialchars($string, ENT_QUOTES, 'UTF-8');

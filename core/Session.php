@@ -9,6 +9,10 @@ class Session
   protected static $sessionStarted = false;
   protected static $sessionIdRegenerated = false;
 
+  /**
+   * コンストラクタ
+   * セッションを自動的に開始する
+   */
   public function __construct()
   {
     //複数回呼び出される事が無いように静的プロパティでチェックする
@@ -18,11 +22,23 @@ class Session
     }
   }
 
+  /**
+   * セッションに値を設定
+   *
+   * @param string $name
+   * @param mixed $value
+   */
   public function set($name, $value)
   {
     $_SESSION[$name] = $value;
   }
 
+  /**
+   * セッションから値を取得
+   *
+   * @param string $name
+   * @param mixed $default 指定したキーが存在しない場合のデフォルト値
+   */
   public function get($name, $default = null)
   {
     if (isset($_SESSION[$name])) {
@@ -31,11 +47,19 @@ class Session
     return $default;
   }
 
+  /**
+   * セッションから値を削除
+   *
+   * @param string $name
+   */
   public function remove($name)
   {
     unset($_SESSION[$name]);
   }
 
+  /**
+   * セッションを空にする
+   */
   public function clear()
   {
     $_SESSION = array();
@@ -62,6 +86,7 @@ class Session
   }
 
   /**
+   * 認証済みか判定
    * _authenticatedというキーでログインしているかどうかの判定を行う
    */
   public function isAuthenticated()

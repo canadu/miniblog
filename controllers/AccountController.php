@@ -153,6 +153,7 @@ class AccountController extends Controller
 
     if (count($errors) === 0) {
 
+      //
       $user_repository = $this->db_manager->get('User');
 
       //ユーザーIDから名前を取得する

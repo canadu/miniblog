@@ -103,7 +103,7 @@ class Request
     //現在のスクリプトのパス（フロントコントローラーまでのパスが含まれている）
     $script_name = $_SERVER['SCRIPT_NAME'];
 
-    //リクエストのURIを取得
+    //リクエストのURIを取得(ホスト部より後ろの値を取得)
     $request_uri = $this->getRequestUri();
 
     //$request_uriの中で$script_nameの文字列が最初に現れる箇所を取得
@@ -127,7 +127,7 @@ class Request
     // ベースURL(ドメイン以降からフロントコントローラーまでの値)を取得
     $base_url = $this->getBaseUrl();
 
-    //リクエストURIを取得
+    //リクエストURIを取得（フロントコントローラー以降を取得）
     $request_uri = $this->getRequestUri();
 
     //ゲットパラメーターを取り除いた値を取得する
@@ -135,7 +135,8 @@ class Request
       $request_uri = substr($request_uri, 0, $pos);
     }
 
-    #request_uriからベースURL部分を除いた値をpathinfoとして取得する
+    # request_uriからベースURL部分を除いた値をpathinfoとして取得する
+    # /index.php/user/user1の場合→/user/user1 を取得
     $path_info = (string)substr($request_uri, mb_strlen($base_url));
 
     return $path_info;

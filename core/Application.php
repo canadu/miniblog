@@ -39,6 +39,7 @@ abstract class Application
 
   /**
    * デバッグモードを設定
+   * モードに応じてエラーの表示処理を変更する
    *
    * @param boolean $debug
    */
@@ -55,7 +56,7 @@ abstract class Application
   }
 
   /**
-   * アプリケーションの初期化
+   * クラスの初期化処理を行う
    */
   protected function initialize()
   {
@@ -191,6 +192,7 @@ abstract class Application
       $params = $this->router->resolve($this->request->getPathInfo());
 
       if ($params === false) {
+        //ルーティングが定義されていない場合はエラー
         throw new HttpNotFoundException('No route found for ' . $this->request->getPathInfo());
       }
 

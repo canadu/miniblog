@@ -26,7 +26,7 @@ class ClassLoader
    */
   public function  register()
   {
-    // loadClassメソッドを実行する
+    //loadClassメソッドを実行する
     spl_autoload_register(array($this, 'loadClass'));
   }
 

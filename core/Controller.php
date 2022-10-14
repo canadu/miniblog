@@ -12,6 +12,7 @@
  * 404エラー画面に遷移する > forward404
  * CSRF対策を行う > generateCsrfToken,checkCsrfToken
  * ログイン状態の制御機能 > runメソッドの内部
+ * セッションや、リクエストパラメータなどコンテキストに左右される情報はコントローラーからモデルクラスに渡す！
  *
  */
 abstract class Controller
@@ -51,7 +52,9 @@ abstract class Controller
    */
   public function run($action, $params = array())
   {
+    //アクション名をプロパティとして保存
     $this->action_name = $action;
+
     //アクションにあたるメソッド名はアクション名 + Action()というルールで扱う
     $action_method = $action . 'Action';
 

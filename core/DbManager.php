@@ -10,6 +10,12 @@ class DbManager
   protected $repository_connection_map = array();
   protected $repositories = array();
 
+  /**
+   * データベースへ接続
+   *
+   * @param string $name
+   * @param array $params
+   */
   public function connect($name, $params)
   {
     $params = array_merge(array(
@@ -30,6 +36,12 @@ class DbManager
     $this->connections[$name] = $con;
   }
 
+  /**
+   * コネクションを取得
+   *
+   * @string $name
+   * @return PDO
+   */
   public function getConnection($name = null)
   {
     if (is_null($name)) {
@@ -38,11 +50,23 @@ class DbManager
     return $this->connections[$name];
   }
 
+  /**
+   * リポジトリごとのコネクション情報を設定
+   *
+   * @param string $repository_name
+   * @param string $name
+   */
   public function setRepositoryConnectionMap($repository_name, $name)
   {
     $this->repository_connection_map[$repository_name] = $name;
   }
 
+  /**
+   * 指定されたリポジトリに対応するコネクションを取得
+   *
+   * @param string $repository_name
+   * @return PDO
+   */
   public function getConnectionForRepository($repository_name)
   {
     if (isset($this->repository_connection_map[$repository_name])) {
